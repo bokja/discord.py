@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
+
 """
 The MIT License (MIT)
 
-Copyright (c) 2015-present Rapptz
+Copyright (c) 2015-2020 Rapptz
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -22,28 +24,8 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
-from __future__ import annotations
-
+from . import utils
 from .mixins import Hashable
-from .utils import snowflake_time
-
-from typing import (
-    SupportsInt,
-    TYPE_CHECKING,
-    Union,
-)
-
-if TYPE_CHECKING:
-    import datetime
-
-    SupportsIntCast = Union[SupportsInt, str, bytes, bytearray]
-
-# fmt: off
-__all__ = (
-    'Object',
-)
-# fmt: on
-
 
 class Object(Hashable):
     """Represents a generic Discord object.
@@ -79,21 +61,18 @@ class Object(Hashable):
         The ID of the object.
     """
 
-    def __init__(self, id: SupportsIntCast):
+    def __init__(self, id):
         try:
             id = int(id)
         except ValueError:
-            raise TypeError(f'id parameter must be convertable to int not {id.__class__!r}') from None
+            raise TypeError('id parameter must be convertable to int not {0.__class__!r}'.format(id)) from None
         else:
             self.id = id
 
-    def __repr__(self) -> str:
-        return f'<Object id={self.id!r}>'
+    def __repr__(self):
+        return '<Object id=%r>' % self.id
 
     @property
-    def created_at(self) -> datetime.datetime:
+    def created_at(self):
         """:class:`datetime.datetime`: Returns the snowflake's creation time in UTC."""
-        return snowflake_time(self.id)
-
-
-OLDEST_OBJECT = Object(id=0)
+        return utils.snowflake_time(self.id)
